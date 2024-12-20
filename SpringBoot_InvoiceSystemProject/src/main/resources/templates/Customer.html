@@ -1,0 +1,146 @@
+ <div th:replace="Header">.....</div>
+		<script>
+			$(document).ready(function(){
+				ClearData();
+			})
+			function AddNewCustomer(){
+				var st={
+					"customer_name":$("#txtcustomer_name").val(),
+					"mobile_number":$("#txtmobile_number").val(),
+					"city":$("#txtcity").val()
+				};
+				$.ajax({
+					url:'/customer/add',
+					method:'post',
+					data:st,
+					success:function(resp){
+						alert(resp);
+						ClearData();
+						window.location.reload();
+					}
+				})
+			}
+			function ViewCustomer(cid){
+				 $.ajax({
+					url:'/customer/getcustomer/'+cid,
+					method:'get',
+					success:function(resp){
+						//console.log(resp);
+						$("#txtcustomer_id").val(resp.customer_id);
+						$("#txtcustomer_name").val(resp.customer_name);
+						$("#txtmobile_number").val(resp.mobile_number);
+						$("#txtcity").val(resp.city);
+						$("#btnsubmit").hide();
+						$("#btnupdate").show();					
+						
+					}
+				 })
+			}
+			function UpdateCustomer(){
+							var st={
+								"customer_id":$("#txtcustomer_id").val(),
+								"customer_name":$("#txtcustomer_name").val(),
+								"mobile_number":$("#txtmobile_number").val(),
+								"city":$("#txtcity").val()
+							};
+							$.ajax({
+								url:'/customer/update',
+								method:'post',
+								data:st,
+								success:function(resp){
+									alert(resp);
+									ClearData();
+									window.location.reload();
+								}
+							})
+						}
+			function RemoveCustomer(cid){
+				
+				if(confirm("Really want to delete?")){
+					$.ajax({
+										url:'/customer/delete/'+cid,
+										method:'post',
+										success:function(resp){
+											alert(resp);
+											ClearData();
+											window.location.reload();
+										}
+									})
+				}
+				
+						}
+			function ClearData(){
+				$("#txtcustomer_id").val("");
+				$("#txtcustomer_name").val("");
+				$("#txtmobile_number").val("");
+				$("#txtcity").val("");
+				$("#btnsubmit").show();
+				$("#btnupdate").hide();
+								
+			}
+		</script>
+	 
+	<div class="row">
+		<div class="col-md-4">
+			<div class="card">
+									  
+									<div class="card-header">
+										<h4>Customer Form</h4>
+									</div>
+									<div class="card-body">
+										<div class="mb-3">
+											<label>Customer Id</label>
+											<input type="text" id="txtcustomer_id" class="form-control" disabled>
+										</div>
+										<div class="mb-3">
+											<label>Customer Name</label>
+											<input type="text" id="txtcustomer_name" class="form-control">
+										</div>
+										<div class="mb-3">
+											<label>Mobile Number</label>
+											<input type="text" id="txtmobile_number" class="form-control">
+										</div>
+										<div class="mb-3">
+											<label>City</label>
+											<input type="text" id="txtcity" class="form-control">
+										</div>
+
+									</div>
+									<div class="card-footer">
+										<input type="button" value="Submit" id="btnsubmit" onclick="AddNewCustomer()" class="btn btn-primary">
+										<input type="button" value="Update" id="btnupdate" onclick="UpdateCustomer()" class="btn btn-info">
+										<input type="button" value="Clear" id="btnclear" onclick="ClearData()" class="btn btn-danger">
+
+																		</div>
+								</div>
+		</div>
+		<div class="col-md-8">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Customer Id</th>
+						<th>Customer Name</th>
+						<th>Mobile Number</th>
+						<th>City</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody th:each="c:${customerlist}">
+					<tr>
+						<td th:text="${c.customer_id}"></td>
+						<td th:text="${c.customer_name}"></td>
+						<td th:text="${c.mobile_number}"></td>
+						<td th:text="${c.city}"></td>
+						<td>
+							<input type="button" class="btn btn-info btn-sm" value="View" th:onclick="ViewCustomer([[${c.customer_id}]])"/>
+							&nbsp;
+							<input type="button" class="btn btn-danger btn-sm" value="Remove" th:onclick="RemoveCustomer([[${c.customer_id}]])"/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>				
+
+
+<div th:replace="Footer">.....</div>
